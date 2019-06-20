@@ -1,3 +1,10 @@
+genrule(
+    name = "gen_version",
+    stamp = 1,
+    cmd = "echo $$(cat bazel-out/volatile-status.txt bazel-out/stable-status.txt | grep PRINTY | cut -d ' ' -f 2) > $@",
+    outs = ["gen_version.txt"],
+)
+
 java_library(
     name = "printy_lib",
     srcs = glob(["src/main/java/**/*.java"]),

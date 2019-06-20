@@ -5,6 +5,21 @@ genrule(
     outs = ["gen_version.txt"],
 )
 
+genrule(
+    name = "printy_stamped",
+    srcs = [":printy_deploy.jar"],
+    tools = [":gen_version.txt"],
+    cmd = " && ".join([
+        "r=$$PWD",
+        "t=$$(mktemp -d)",
+        "GEN_VERSION=$$(cat $(location :gen_version.txt))",
+        "cd $$t",
+        "unzip -q $$r/$<",
+        "sed -Ei \"s/^(Implementation-Version:[[:blank:]]).*/\\1$$GEN_VERSION/\" META-INF/MANIFEST.MF",
+        "zip -qr $$r/$@ ."]),
+    outs = ["printy_stamped.jar"],
+)
+
 java_library(
     name = "printy_lib",
     srcs = glob(["src/main/java/**/*.java"]),
